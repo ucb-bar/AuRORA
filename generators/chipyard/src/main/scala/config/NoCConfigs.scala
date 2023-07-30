@@ -3,6 +3,7 @@ package chipyard
 import freechips.rocketchip.config.{Config}
 import freechips.rocketchip.diplomacy.{AsynchronousCrossing}
 import freechips.rocketchip.subsystem.{SBUS, MBUS}
+import freechips.rocketchip.rocket.DCacheParams
 
 import constellation.channel._
 import constellation.routing._
@@ -216,67 +217,44 @@ class SbusRingNoCConfig extends Config(
   new chipyard.config.AbstractConfig
 )
 
-class RocketReRoCCNoCConfig extends Config(
-  new constellation.soc.WithSbusNoC(constellation.protocol.TLNoCParams(
-    constellation.protocol.DiplomaticNetworkNodeMapping(
-      inNodeMapping = ListMap(
-        "Core 0" -> 0,
-        "ReRoCC 0" -> 1,
-        "ReRoCC 1" -> 2,
-        "ReRoCC 2" -> 3,
-        "ReRoCC 3" -> 4,
-        "serial-tl" -> 1),
-      outNodeMapping = ListMap(
-        "system[0]" -> 5,
-        "system[1]" -> 6,
-        "system[2]" -> 7,
-        "system[3]" -> 8,
-        "pbus" -> 1)), // TSI is on the pbus, so serial-tl and pbus should be on the same node
-    NoCParams(
-      topology        = UnidirectionalTorus1D(9),
-      channelParamGen = (a, b) => UserChannelParams(Seq.fill(10) { UserVirtualChannelParams(4) }),
-      routingRelation = NonblockingVirtualSubnetworksRouting(UnidirectionalTorus1DDatelineRouting(), 5, 2))
-  )) ++
-  new chipyard.config.WithReRoCCNoC(chipyard.rerocc.ReRoCCNoCParams(
-    tileClientMapping = ListMap( // maps tile ids to noc nodes
-      0 -> 0),
-    managerMapping = ListMap( // maps manager ids to noc nodes
-      0 -> 1,
-      1 -> 2,
-      2 -> 3,
-      3 -> 4),
-    nocParams = NoCParams(
-      topology = UnidirectionalTorus1D(9),
-      channelParamGen = (a, b) => UserChannelParams(Seq.fill(4) { UserVirtualChannelParams(4) }),
-      routingRelation = NonblockingVirtualSubnetworksRouting(UnidirectionalTorus1DDatelineRouting(), 2, 2)
-  ))) ++
-  new chipyard.RocketReRoCCConfig
-)
-
-class GemminiReRoCCNoCConfig extends Config(
+class Gemmini10ReRoCCOrigNoCConfig extends Config(
   new constellation.soc.WithSbusNoC(constellation.protocol.TLNoCParams(
     constellation.protocol.DiplomaticNetworkNodeMapping(
       inNodeMapping = ListMap(
         "serial-tl" -> 0,
-        "Core 0" -> 1, "Core 1" -> 2, "Core 2" -> 13,
-        "ReRoCC 0" -> 3,
-        "ReRoCC 1" -> 6,
-        "ReRoCC 2" -> 7,
-        "ReRoCC 3" -> 10,
-        "ReRoCC 4" -> 11,
-        "ReRoCC 5" -> 14,
-        "ReRoCC 6" -> 15,
+        "Core 0" -> 20,
+        "Core 1" -> 23,
+        "Core 2" -> 24,
+        "Core 3" -> 25,
+        "Core 4" -> 26,
+        "ReRoCC 0" -> 8,
+        "ReRoCC 1" -> 9,
+        "ReRoCC 2" -> 10,
+        "ReRoCC 3" -> 11,
+        "ReRoCC 4" -> 16,
+        "ReRoCC 5" -> 17,
+        "ReRoCC 6" -> 18,
+        "ReRoCC 7" -> 19,
+        "ReRoCC 8" -> 21,
+        "ReRoCC 9" -> 22
       ),
       outNodeMapping = ListMap(
         "error" -> 0,
-        "serdesser[0]," -> 4,
-        "serdesser[1]," -> 5,
-        "serdesser[2]," -> 8,
-        "serdesser[3]," -> 9,
-        "system[0]|" -> 0, "system[1]|" -> 12
+        "serdesser[0]" -> 4,
+        "serdesser[1]" -> 5,
+        "serdesser[2]" -> 6,
+        "serdesser[3]" -> 7,
+        "serdesser[4]" -> 12,
+        "serdesser[5]" -> 13,
+        "serdesser[6]" -> 14,
+        "serdesser[7]" -> 15,
+        "system[0]|" -> 0,
+        "system[1]|" -> 1,
+        "system[2]|" -> 2,
+        "system[3]|" -> 3
       )),
     NoCParams(
-      topology        = Mesh2D(4, 4),
+      topology        = Mesh2D(7, 4),
       channelParamGen = (a, b) => UserChannelParams(Seq.fill(8) { UserVirtualChannelParams(4) },
         useOutputQueues = false),
       routingRelation = NonblockingVirtualSubnetworksRouting(Mesh2DEscapeRouting(), 5, 1))
@@ -286,87 +264,26 @@ class GemminiReRoCCNoCConfig extends Config(
     //     useOutputQueues = false),
     //   routingRelation = NonblockingVirtualSubnetworksRouting(TerminalRouterRouting(Mesh2DEscapeRouting()), 5, 1))
   )) ++
-  new chipyard.config.WithReRoCCNoC(chipyard.rerocc.ReRoCCNoCParams(
-    tileClientMapping = ListMap( // maps tile ids to noc nodes
-      0 -> 1,
-      1 -> 2,
-      2 -> 13),
-    managerMapping = ListMap( // maps manager ids to noc nodes
-      0 -> 3,
-      1 -> 6 ,
-      2 -> 7,
-      3 -> 10,
-      4 -> 11,
-      5 -> 14,
-      6 -> 15),
-    nocParams = NoCParams(
-      topology = Mesh2D(4, 4),
-      channelParamGen = (a, b) => UserChannelParams(Seq.fill(3) { UserVirtualChannelParams(4) }),
-      routingRelation = NonblockingVirtualSubnetworksRouting(Mesh2DEscapeRouting(), 2, 1)
-  ))) ++
-  new GemminiReRoCCBaseConfig
+  new Gemmini10ReRoCCBaseConfig
 )
-
-class GemminiReRoCCSharedNoCConfig extends Config(
-  new constellation.soc.WithGlobalNoC(GlobalNoCParams(
-    NoCParams(
-      topology        = Mesh2D(4, 4),
-      channelParamGen = (a, b) => UserChannelParams(Seq.fill(8) { UserVirtualChannelParams(4) }),
-      routingRelation = NonblockingVirtualSubnetworksRouting(Mesh2DEscapeRouting(), 7, 1))
-  )) ++
-  new constellation.soc.WithSbusNoC(constellation.protocol.TLNoCParams(
-    constellation.protocol.DiplomaticNetworkNodeMapping(
-      inNodeMapping = ListMap(
-        "serial-tl" -> 0,
-        "Core 0" -> 1, "Core 1" -> 2, "Core 2" -> 13,
-        "ReRoCC 0" -> 3,
-        "ReRoCC 1" -> 6,
-        "ReRoCC 2" -> 7,
-        "ReRoCC 3" -> 10,
-        "ReRoCC 4" -> 11,
-        "ReRoCC 5" -> 14,
-        "ReRoCC 6" -> 15,
-      ),
-      outNodeMapping = ListMap(
-        "error" -> 0,
-        "serdesser[0]," -> 4,
-        "serdesser[1]," -> 5,
-        "serdesser[2]," -> 8,
-        "serdesser[3]," -> 9,
-        "system[0]|" -> 0, "system[1]|" -> 12
-      ))
-  ), globalNoC = true) ++
-  new chipyard.config.WithReRoCCNoC(chipyard.rerocc.ReRoCCNoCParams(
-    tileClientMapping = ListMap( // maps tile ids to noc nodes
-      0 -> 1,
-      1 -> 2,
-      2 -> 13),
-    managerMapping = ListMap( // maps manager ids to noc nodes
-      0 -> 3,
-      1 -> 6 ,
-      2 -> 7,
-      3 -> 10,
-      4 -> 11,
-      5 -> 14,
-      6 -> 15),
-    useGlobalNoC = true)) ++
-  new GemminiReRoCCBaseConfig
-)
-
-
-class GemminiReRoCCBaseConfig extends Config(
-  new chipyard.config.WithReRoCC(4,chipyard.rerocc.ReRoCCTileParams(
-    dcacheParams=None, mergeTLNodes=true, l2TLBEntries=256, l2TLBWays=4)) ++
-  new gemmini.DefaultGemminiConfig ++
-  new gemmini.DefaultGemminiConfig ++
-  new gemmini.DefaultGemminiConfig ++
-  new gemmini.DefaultGemminiConfig ++
-  new gemmini.DefaultGemminiConfig ++
-  new gemmini.DefaultGemminiConfig ++
-  new gemmini.DefaultGemminiConfig ++
-  new freechips.rocketchip.subsystem.WithNBigCores(3) ++
+class Gemmini10ReRoCCBaseConfig extends Config(
+  //new chipyard.config.WithReRoCC(4, chipyard.rerocc.ReRoCCTileParams(dcacheParams=None, mergeTLNodes=true, l2TLBEntries=1024, l2TLBWays=4)) ++
+  new chipyard.config.WithReRoCC(4, chipyard.rerocc.ReRoCCTileParams(l2TLBEntries=512, l2TLBWays=4, mergeTLNodes=true, dcacheParams=Some(DCacheParams(nWays=4, nSets=4)))) ++
+  new gemmini.DummyDefaultGemminiConfig ++
+  new gemmini.DummyDefaultGemminiConfig ++
+  new gemmini.DummyDefaultGemminiConfig ++
+  new gemmini.DummyDefaultGemminiConfig ++
+  new gemmini.DummyDefaultGemminiConfig ++
+  new gemmini.DummyDefaultGemminiConfig ++
+  new gemmini.DummyDefaultGemminiConfig ++
+  new gemmini.DummyDefaultGemminiConfig ++
+  new gemmini.DummyDefaultGemminiConfig ++
+  new gemmini.DummyDefaultGemminiConfig ++
+  new freechips.rocketchip.subsystem.WithNBigCores(5) ++
+  new chipyard.config.WithSystemBusWidth(128) ++
   new freechips.rocketchip.subsystem.WithExtMemSbusBypass ++
-  new freechips.rocketchip.subsystem.WithNBanks(4) ++
-  new freechips.rocketchip.subsystem.WithInclusiveCache(capacityKB=2048) ++
-  new freechips.rocketchip.subsystem.WithNMemoryChannels(2) ++
+  new freechips.rocketchip.subsystem.WithNBanks(8) ++
+  new freechips.rocketchip.subsystem.WithInclusiveCache(nWays=2, capacityKB=2048) ++ 
+  new freechips.rocketchip.subsystem.WithNMemoryChannels(4) ++
   new chipyard.config.AbstractConfig)
+
