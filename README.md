@@ -21,7 +21,7 @@ Similar to virtual memory to physical memory abstraction, AuRORA provides an abs
 AuRORA's virtualized interface allows workloads to be flexibly and dynamically orchestrated to available accelerators based on their latency requirement, regardless of physical accelerator instances' location.
 To effectively support virtualized accelerator orchestration, AuRORA delivers a full-stack solution that co-designs the HW and SW layers, with the goal of delivering scalable performance for multiple accelerator system. 
 
-![AuRORA full-stack accelerator integration methodology](./img/aurora-stack.png)
+<img src="./img/aurora-stack.png" width="75%" height="75%" />
 
 ## Other Useful Links
 
