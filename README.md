@@ -50,10 +50,6 @@ Please refer to the SoC [Configs](https://github.com/ucb-bar/AuRORA/blob/008723e
 ## AuRORA Runtime
 AuRORA runtime is implemented in [gemmini tests](https://github.com/SeahK/aurora-rocc-tests-ae/tree/main) for convenience as we use Gemmini DNN accelerator generator for evaluation. 
 
-## ToDo
-This is the repository for AE. We are in the process of making a clean version of repository with examples. We also have improvements/updates in the ReRoCC interface, and we will be incorporating those in the update.
-We have updates in ReRoCC interface as well
-
 ## Citing AuRORA
 If AuRORA helps you in your research, you are encouraged to cite our paper. Here is an example bibtex:
 
@@ -67,6 +63,8 @@ If AuRORA helps you in your research, you are encouraged to cite our paper. Here
 }
 ```
 
+## ToDo
+This is the repository for AE. We are in the process of making a clean version of the repository with simpler examples. We also have ongoing improvements/updates in the ReRoCC interface, and we will be incorporating those in the update.
 
 ## Other Useful Resources
 
