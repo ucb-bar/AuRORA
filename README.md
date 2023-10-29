@@ -1,8 +1,5 @@
 # AuRORA: Virtualized Accelerator Orchestration for Multi-Tenant Workloads
 
-| README is WIP!|
-|-----|
-
 | This is an archival of the AuRORA (MICRO 2023) Chipyard artifact. |
 |-----|
 
@@ -29,9 +26,11 @@ To effectively support virtualized accelerator orchestration, AuRORA delivers a 
 
 From bottom to top, AuRORA full-stack includes:
 * Low-overhead shim microarchitecture to interface between cores and accelerators.
-* Hardware messaging protocol between core and accelerators to enable scalable and virtualized accelerator deployment on SoC
-* ISA extension to allow user threads to interact with AuRORA hardware in a programmable fashion
-* Lightweight software runtime to dynamically reallocate resources for multi-tenant workloads
+* Hardware messaging protocol between core and accelerators to enable scalable and virtualized accelerator deployment on SoC.
+* ISA extension to allow user threads to interact with AuRORA hardware in a programmable fashion.
+* Lightweight software runtime to dynamically reallocate resources for multi-tenant workloads.
+
+Please refer to our [paper](https://people.eecs.berkeley.edu/~ysshao/assets/papers/aurora-micro2023.pdf) for details.
 
 ## AuRORA Microarchitecture
 AuRORA microarchitecture component consists of ``Client`` and ``Manager``. 
@@ -52,7 +51,21 @@ Please refer to the SoC [Configs](https://github.com/ucb-bar/AuRORA/blob/008723e
 AuRORA runtime is implemented in [gemmini tests](https://github.com/SeahK/aurora-rocc-tests-ae/tree/main) for convenience as we use Gemmini DNN accelerator generator for evaluation. 
 
 ## ToDo
+This is the repository for AE. We are in the process of making a clean version of repository with examples. We also have improvements/updates in the ReRoCC interface, and we will be incorporating those in the update.
+We have updates in ReRoCC interface as well
 
+## Citing AuRORA
+If AuRORA helps you in your research, you are encouraged to cite our paper. Here is an example bibtex:
+
+```BibTex
+@inproceedings{
+  aurora,
+  title={AuRORA: Virtualized Accelerator Orchestration for Multi-Tenant Workloads},
+  author={Seah Kim and Jerry Zhao and Krste Asanovic and Borivoje Nikolic and Yakun Sophia Shao},
+  booktitle={IEEE/ACM International Symposium on Microarchitecture (MICRO)},
+  year={2023}
+}
+```
 
 
 ## Other Useful Resources
