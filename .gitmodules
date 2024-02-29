@@ -1,0 +1,6 @@
+[submodule "rocc-software"]
+	path = rocc-software
+	url = https://github.com/IBM/rocc-software.git
+[submodule "riscv-tests"]
+	path = riscv-tests
+	url = https://github.com/riscv-software-src/riscv-tests.git
