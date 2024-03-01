@@ -8,9 +8,11 @@
 #ifndef BAREMETAL
 #include <sys/mman.h>
 #endif
-#define FLOAT true
+
+#define PRINT_LOG 1
+
 #include "include/gemmini_testutils.h"
-#include "aurora-sw/rerocc.h"
+#include "aurora-sw/aurora.h"
 
 #define CHECK_RESULT 1
 
@@ -102,13 +104,13 @@ int main() {
     printf("MAT_DIM_K: %d\n", MAT_DIM_K);
 
     int cfgid = CFGID;
-    for(int i = 0; i < NUM_ACCEL; i++){
-        bool acquired = rr_acquire_single(cfgid, i);
-        if(acquired){
-            printf("gemmini %d acquired to cfgid %d\n", i, cfgid);
-            break;
-        }
+
+    bool granted = single_acquire(cfgid, 0, NUM_ACCEL);
+    if(!granted){
+        printf("Failed to acquire any accelerator \n");
+        exit(1);
     }
+
     rr_set_opc(XCUSTOM_ACC, cfgid);
   
     gemmini_flush(0);
