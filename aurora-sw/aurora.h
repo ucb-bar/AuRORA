@@ -9,7 +9,7 @@
 
 bool single_acquire(int cfgid, int start_id, int num_search_accel){
     for(int i = start_id; i < start_id + num_search_accel; i++){
-        bool acquired = rr_acquire_single(cfgid, i);
+        bool acquired = rr_acquire(cfgid, i);
         if(acquired){
 #if PRINT_LOG == 1
             printf("accel %d acquired to cfgid %d\n", i, cfgid);
@@ -24,7 +24,7 @@ int multi_acquire(int start_cfgid, int num_accel, int start_id, int num_search_a
     int num_acquired = 0;
     for(int i = start_id; i < start_id + num_search_accel; i++){
         int cfgid = num_acquired + start_cfgid;
-        bool acquired = rr_acquire_single(cfgid, i);
+        bool acquired = rr_acquire(cfgid, i);
         if(acquired){
 #if PRINT_LOG == 1
             printf("accel %d acquired to cfgid %d\n", i, cfgid);

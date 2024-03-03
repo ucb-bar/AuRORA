@@ -101,7 +101,7 @@ static inline void write_rr_csr(uint64_t cfgId, uint64_t wdata) {
   swap_rr_csr(cfgId, wdata);
 }
 
-static bool rr_acquire_single(uint32_t cfgId, uint64_t accelId) {
+static bool rr_acquire(uint32_t cfgId, uint64_t accelId) {
   uint32_t csrid = CSR_RRCFG0 + cfgId;
   uint64_t w = RR_CFG_ACQ_MASK | (accelId & RR_CFG_MGR_MASK);
   write_rr_csr(csrid, w);
@@ -112,12 +112,6 @@ static void rr_release(uint32_t cfgId) {
   uint32_t csrid = CSR_RRCFG0 + cfgId;
   uint64_t w = 0;
   write_rr_csr(csrid, w);
-}
-
-static bool rr_acquire_multi(uint32_t cfgId, uint64_t* accelIds, size_t n) {
-  for (size_t i = 0; i < n; i++)
-    if (rr_acquire_single(cfgId, accelIds[i])) return true;
-  return false;
 }
 
 static void rr_set_opc(uint8_t opc, uint32_t cfgId) {
