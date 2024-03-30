@@ -1,7 +1,5 @@
 # AuRORA: Virtualized Accelerator Orchestration for Multi-Tenant Workloads
 
-| This is an archival of the AuRORA (MICRO 2023) Chipyard artifact. |
-|-----|
 
 ## Quick Links
 
@@ -62,9 +60,6 @@ If AuRORA helps you in your research, you are encouraged to cite our paper. Here
   year={2023}
 }
 ```
-
-## ToDo
-This is the repository for AE. We are in the process of making a clean version of the repository with simpler examples. We also have ongoing improvements/updates in the ReRoCC interface, and we will be incorporating those in the update.
 
 ## Other Useful Resources
 
