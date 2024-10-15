@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+git submodule init
+git submodule update
+
+cd riscv-tests
+git submodule init
+git submodule update
+cd ../
+
 if [ ! -d "build" ] ; then
     autoconf && \
         mkdir build && cd build && \

@@ -36,9 +36,10 @@ typedef elem_t ACC_T;
 #endif
 
 // number of accelerator in the system
-#define NUM_ACCEL 4
+#define NUM_ACCEL 2
+
 // CFGID would like to assign to
-#define CFGID 1
+#define CFGID 0
 
 void print_tile(elem_t* in, int tile_dim) {
   for (size_t r = 0; r < tile_dim; r++) {

@@ -47,4 +47,13 @@ void multi_release(int start_cfgid, int num_accel){
         rr_release(i);
     }
 }
+
+void multi_fence(int start_cfgid, int num_accel){
+    for(int i = start_cfgid; i < start_cfgid + num_accel; i++){
+#if PRINT_LOG == 1
+        printf("accel cfgid %d fenced\n", i);
+#endif
+        rr_fence(i);
+    }
+}
 #endif

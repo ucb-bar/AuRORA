@@ -2,6 +2,7 @@ include $(abs_top_srcdir)/Makefrag
 
 tests = \
 	tiled_matmul \
+	tiled_matmul_ws_perf \
 	resadd \
 	mt_contention \
 
@@ -25,7 +26,7 @@ endif
 
 BENCH_COMMON = $(abs_top_srcdir)/riscv-tests/benchmarks/common
 GEMMINI_HEADERS = $(abs_top_srcdir)/include/gemmini.h $(abs_top_srcdir)/include/gemmini_params.h $(abs_top_srcdir)/include/gemmini_testutils.h
-REROCC_HEADERS = $(abs_top_srcdir)/aurora-sw/rerocc.h 
+REROCC_HEADERS = $(abs_top_srcdir)/aurora-sw/rerocc.h $(abs_top_srcdir)/aurora-sw/aurora.h $(abs_top_srcdir)/aurora-sw/gemmini_aurora.h
 
 CFLAGS := $(CFLAGS) \
 	-DPREALLOCATE=1 \
