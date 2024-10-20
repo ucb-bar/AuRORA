@@ -31,7 +31,7 @@ void thread_entry (int cid, int nc){
       if (i == cid) printf("Thread %d/%d starting\n", cid, nc);
       barrier(nc);
     }
-    uint64_t target_cycles = cid == 0 ? 220000 : 220000*2.3;
+    uint64_t target_cycles = cid == 0 ? 220000 : 220000*2.2;
 
     for(int i = 0; i < nc; i++){
       if (i == cid) printf("Thread %d target cycles: %llu\n", cid, target_cycles);
@@ -55,7 +55,6 @@ void thread_entry (int cid, int nc){
               layer_requested_accel[t][layer] = num_want_accel;
               acquired_accel = multi_acquire(0, num_want_accel, 0, NUM_ACCEL);
               waiting_spin[t][layer] ++;
-              //if (num_want_accel != 0) printf("thread %d target %d layer %d requested %d, acquired %d\n", cid, layer_target_cycles, layer, num_want_accel, acquired_accel);
             }
             layer_acquired_accel[t][layer] = acquired_accel;
 

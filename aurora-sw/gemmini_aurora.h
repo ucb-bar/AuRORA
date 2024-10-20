@@ -250,7 +250,7 @@ static int calc_num_accel_needed_matmul(size_t dim_I, size_t dim_J, size_t dim_K
     uint64_t unit_ideal_cycle = (comp_ideal_cycle + mem_ideal_cycle);
 
     float float_num_accel = unit_ideal_cycle / target_cycles;
-    int num_accel = ceil_divide_int(unit_ideal_cycle*1.1, target_cycles);
+    int num_accel = ceil_divide_int(unit_ideal_cycle, target_cycles);
     if(target_cycles < 0) num_accel = total_num_accel;
     else if(float_num_accel < 0.5) num_accel = 0;
     else if(num_accel >= total_num_accel - 1) num_accel = total_num_accel;
