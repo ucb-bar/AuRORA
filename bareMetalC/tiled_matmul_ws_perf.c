@@ -20,19 +20,9 @@
 #define A_TRANSPOSE 0
 #define B_TRANSPOSE 0
 
-#ifndef BAREMETAL
-
-#define MAT_DIM_I 128
-#define MAT_DIM_K 512
+#define MAT_DIM_I 256
+#define MAT_DIM_K 256
 #define MAT_DIM_J 256
-
-#else
-
-#define MAT_DIM_I 192
-#define MAT_DIM_K 192
-#define MAT_DIM_J 192
-
-#endif
 
 #if A_TRANSPOSE==0
 #define A_STRIDE MAT_DIM_K
@@ -48,7 +38,7 @@
 
 // number of accelerator in the system
 #define NUM_ACCEL 4
-#define NUM_ACQUIRE_ACCEL 3
+#define NUM_ACQUIRE_ACCEL 2
 
 int main() {
 #ifndef BAREMETAL

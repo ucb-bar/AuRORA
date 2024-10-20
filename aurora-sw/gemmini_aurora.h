@@ -240,12 +240,13 @@ static void tiled_rerocc_matmul_auto(size_t dim_I, size_t dim_J, size_t dim_K,
 #undef max_tile_k
 }
 
+// very simple example of num_accel calculation
+// replace to custom ones
 static int calc_num_accel_needed_matmul(size_t dim_I, size_t dim_J, size_t dim_K, 
         int64_t target_cycles, size_t total_num_accel){
       
     uint64_t comp_ideal_cycle = dim_I * dim_J * dim_K / (DIM * DIM);
     uint64_t mem_ideal_cycle = (dim_I * dim_K) / DIM + (dim_I * dim_J) / DIM + (dim_J * dim_K) / DIM;
-    //uint64_t unit_ideal_cycle = comp_ideal_cycle > mem_ideal_cycle ? comp_ideal_cycle : mem_ideal_cycle;
     uint64_t unit_ideal_cycle = (comp_ideal_cycle + mem_ideal_cycle);
 
     float float_num_accel = unit_ideal_cycle / target_cycles;
