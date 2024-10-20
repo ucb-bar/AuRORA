@@ -240,4 +240,22 @@ static void tiled_rerocc_matmul_auto(size_t dim_I, size_t dim_J, size_t dim_K,
 #undef max_tile_k
 }
 
+static int calc_num_accel_needed_matmul(size_t dim_I, size_t dim_J, size_t dim_K, 
+        int64_t target_cycles, size_t total_num_accel){
+      
+    uint64_t comp_ideal_cycle = dim_I * dim_J * dim_K / (DIM * DIM);
+    uint64_t mem_ideal_cycle = (dim_I * dim_K) / DIM + (dim_I * dim_J) / DIM + (dim_J * dim_K) / DIM;
+    //uint64_t unit_ideal_cycle = comp_ideal_cycle > mem_ideal_cycle ? comp_ideal_cycle : mem_ideal_cycle;
+    uint64_t unit_ideal_cycle = (comp_ideal_cycle + mem_ideal_cycle);
+
+    float float_num_accel = unit_ideal_cycle / target_cycles;
+    int num_accel = ceil_divide_int(unit_ideal_cycle*1.1, target_cycles);
+    if(target_cycles < 0) num_accel = total_num_accel;
+    else if(float_num_accel < 0.5) num_accel = 0;
+    else if(num_accel >= total_num_accel - 1) num_accel = total_num_accel;
+
+    return num_accel;
+
+}
+
 #endif

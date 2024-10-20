@@ -1,10 +1,11 @@
 include $(abs_top_srcdir)/Makefrag
 
 tests = \
+	mt_matmul \
+	mt_contention \
 	tiled_matmul \
 	tiled_matmul_ws_perf \
 	resadd \
-	mt_contention \
 
 tests_baremetal = $(tests:=-baremetal)
 

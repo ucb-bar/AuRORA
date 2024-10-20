@@ -13,7 +13,7 @@
 #include "util.h"
 #include "include/gemmini_testutils.h"
 #include "aurora-sw/aurora.h"
-
+#include "aurora-sw/gemmini_aurora.h"
 
 #define MAT_DIM_I 16
 #define MAT_DIM_J 16

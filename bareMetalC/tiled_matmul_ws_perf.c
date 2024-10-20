@@ -28,9 +28,9 @@
 
 #else
 
-#define MAT_DIM_I 256
-#define MAT_DIM_K 256
-#define MAT_DIM_J 256
+#define MAT_DIM_I 192
+#define MAT_DIM_K 192
+#define MAT_DIM_J 192
 
 #endif
 
@@ -47,8 +47,8 @@
 #endif
 
 // number of accelerator in the system
-#define NUM_ACCEL 2
-#define NUM_ACQUIRE_ACCEL 2
+#define NUM_ACCEL 4
+#define NUM_ACQUIRE_ACCEL 3
 
 int main() {
 #ifndef BAREMETAL

@@ -22,6 +22,9 @@ bool single_acquire(int cfgid, int start_id, int num_search_accel){
 
 int multi_acquire(int start_cfgid, int num_accel, int start_id, int num_search_accel){
     int num_acquired = 0;
+    if (num_accel == 0){
+      return 0;
+    }
     for(int i = start_id; i < start_id + num_search_accel; i++){
         int cfgid = num_acquired + start_cfgid;
         bool acquired = rr_acquire(cfgid, i);
@@ -31,7 +34,7 @@ int multi_acquire(int start_cfgid, int num_accel, int start_id, int num_search_a
 #endif
             num_acquired ++;
             if(num_acquired == num_accel)
-                return num_acquired;
+              return num_acquired;
         }
     }
     // can't acquire num_accel
