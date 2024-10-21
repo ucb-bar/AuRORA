@@ -59,7 +59,9 @@ static void tiled_rerocc_matmul_outer(size_t dim_I, size_t dim_J, size_t dim_K,
 
   const size_t sizeof_D = low_D ? sizeof(elem_t) : sizeof(acc_t) ;
   const size_t sizeof_C = full_C ? sizeof(acc_t) : sizeof(elem_t);
-  
+ 
+  // accelerator configuration
+  // iterate over num_accel by setting opcode
   for(int i = 0; i < num_accel; i++){
     rr_set_opc(XCUSTOM_ACC, i);
     gemmini_extended_config_ex(WS, act & 3, 0, 1, a_transpose, b_transpose);
@@ -77,44 +79,47 @@ static void tiled_rerocc_matmul_outer(size_t dim_I, size_t dim_J, size_t dim_K,
   for (size_t i0 = 0; i0 < I0; i0++)
     for (size_t j0 = 0; j0 < J0; j0++)
       for (size_t k0 = 0; k0 < K0; k0++) {
-        for(size_t n = 0; n < num_accel; n++){
-            if(a_reuse)
-                a_spad_id = ((i0+k0) == 0) ? 1 : 2;
-            if(b_reuse)
-                b_spad_id = ((j0+k0) == 0) ? 1 : 2;
+        if(a_reuse)
+            a_spad_id = ((i0+k0) == 0) ? 1 : 2;
+        if(b_reuse)
+            b_spad_id = ((j0+k0) == 0) ? 1 : 2;
 
+
+
+        const size_t I = i0 < I0-1 ? tile_I : last_I;
+        const size_t J = j0 < J0-1 ? tile_J : last_J;
+        const size_t K = k0 < K0-1 ? tile_K : last_K;
+
+        const size_t pad_I = i0 == I0-1 ? padding_I : 0;
+        const size_t pad_J = j0 == J0-1 ? padding_J : 0;
+        const size_t pad_K = k0 == K0-1 ? padding_K : 0;
+
+        const elem_t * a = a_transpose ? (A + k0*tile_K*DIM*stride_A + i0*tile_I*DIM)
+        : (A + i0*tile_I*DIM*stride_A + k0*tile_K*DIM);
+
+        if(a_reuse && j0 >= 1) a = NULL;
+        
+        for(size_t n = 0; n < num_accel; n++){
             // divided into J dimension
             int J_offset = n * dim_J_divided;
-            rr_set_opc(XCUSTOM_ACC, n);
-
             const void * pre;
             if (k0 != 0) {
-            pre = NULL;
+              pre = NULL;
             } else {
-            size_t bias_row = repeating_bias ? 0 : i0*tile_I*DIM;
-            // pre = &(((acc_t*)D)[bias_row * stride_D + j0 * tile_J * DIM]);
-            pre = (int8_t*)D + (bias_row * stride_D + (j0 * tile_J * DIM + J_offset))*sizeof_D;
+              size_t bias_row = repeating_bias ? 0 : i0*tile_I*DIM;
+              // pre = &(((acc_t*)D)[bias_row * stride_D + j0 * tile_J * DIM]);
+              pre = (int8_t*)D + (bias_row * stride_D + (j0 * tile_J * DIM + J_offset))*sizeof_D;
             }
-
-            void * out = k0 == K0-1 ? (int8_t*)C + (i0*tile_I*DIM*stride_C + (j0*tile_J*DIM + J_offset))*sizeof_C : NULL;
-
-            const size_t I = i0 < I0-1 ? tile_I : last_I;
-            const size_t J = j0 < J0-1 ? tile_J : last_J;
-            const size_t K = k0 < K0-1 ? tile_K : last_K;
-
-            const size_t pad_I = i0 == I0-1 ? padding_I : 0;
-            const size_t pad_J = j0 == J0-1 ? padding_J : 0;
-            const size_t pad_K = k0 == K0-1 ? padding_K : 0;
-
-            const elem_t * a = a_transpose ? (A + k0*tile_K*DIM*stride_A + i0*tile_I*DIM)
-            : (A + i0*tile_I*DIM*stride_A + k0*tile_K*DIM);
 
             const elem_t * b = b_transpose ? (B + (j0*tile_J*DIM + J_offset)*stride_B + k0*tile_K*DIM)
             : (B + k0*tile_K*DIM*stride_B + (j0*tile_J*DIM + J_offset));
-
-            if(a_reuse && j0 >= 1) a = NULL;
+            void * out = k0 == K0-1 ? (int8_t*)C + (i0*tile_I*DIM*stride_C + (j0*tile_J*DIM + J_offset))*sizeof_C : NULL;
             if(b_reuse && i0 >= 1) b = NULL;
+            
+            // set opcode before sending matmul loop command
+            rr_set_opc(XCUSTOM_ACC, n);
             //printf("a_reuse: %d, b_reuse: %d, a_spad_id: %d, b_spad_id: %d, a: %llu, b: %llu \n", a_reuse, b_reuse, a_spad_id, b_spad_id, a, b);
+            // loop matmul function
             sp_tiled_matmul_ws(a, b, pre, out,
                 A_scale_factor, B_scale_factor, D_scale_factor,
                 I, J, K,
@@ -158,7 +163,7 @@ static void tiled_rerocc_matmul_auto(size_t dim_I, size_t dim_J, size_t dim_K,
 #define db_max_tile_i_j ((size_t)sqrt(db_mats_in_acc))
 #define db_max_tile_k (db_mats_in_partition / db_max_tile_i_j)
 
-    // divide by J dimension
+    // divide by J dimension (column dimension of output matrix)
     const size_t dim_J_divided = ceil_divide_int(dim_J, num_accel);
 
     const size_t dim_I_padded = (dim_I / DIM + (dim_I % DIM != 0)) * DIM;
@@ -250,10 +255,10 @@ static int calc_num_accel_needed_matmul(size_t dim_I, size_t dim_J, size_t dim_K
     uint64_t unit_ideal_cycle = (comp_ideal_cycle + mem_ideal_cycle);
 
     float float_num_accel = unit_ideal_cycle / target_cycles;
-    int num_accel = ceil_divide_int(unit_ideal_cycle, target_cycles);
+    int num_accel = ceil_divide_int(unit_ideal_cycle*1.1, target_cycles);
     if(target_cycles < 0) num_accel = total_num_accel;
-    else if(float_num_accel < 0.5) num_accel = 0;
-    else if(num_accel >= total_num_accel - 1) num_accel = total_num_accel;
+    else if(float_num_accel < 0.9) num_accel = 0;
+    else if(num_accel > total_num_accel) num_accel = total_num_accel;
 
     return num_accel;
 

@@ -14,7 +14,7 @@
 
 #define ACTIVATION NO_ACTIVATION
 
-#define NO_BIAS 0
+#define NO_BIAS 1
 #define REPEATING_BIAS 1
 
 #define A_TRANSPOSE 0
@@ -48,9 +48,11 @@ int main() {
     }
 #endif
 
+    // acquire NUM_ACCEL of accelerators
     int num_acquired = multi_acquire(0, NUM_ACCEL, 0, NUM_ACQUIRE_ACCEL);
     printf("Acquired %d accelerators\n", num_acquired);
 
+    // set opcode, flush
     for(int i = 0; i < num_acquired; i++){
         rr_set_opc(XCUSTOM_ACC, i);
         gemmini_flush(i);
@@ -71,15 +73,14 @@ int main() {
     static elem_t full_C[MAT_DIM_I][MAT_DIM_J] row_align(1);
     static acc_t full_D[MAT_DIM_I][MAT_DIM_J] row_align_acc(1);
 
-    static full_t gold_full[MAT_DIM_I][MAT_DIM_J];
-    static elem_t gold[MAT_DIM_I][MAT_DIM_J];
-
     printf("Starting gemmini matmul\n");
     printf("I: %d, J: %d, K: %d\n", MAT_DIM_I, MAT_DIM_J, MAT_DIM_K);
     printf("NO_BIAS: %d, REPEATING_BIAS: %d\n", NO_BIAS, REPEATING_BIAS);
     printf("A_TRANSPOSE: %d, B_TRANSPOSE: %d\n", A_TRANSPOSE, B_TRANSPOSE);
     uint64_t start = read_cycles();
 
+    // example simple matmul function
+    // divide matmul task into num_acquired accelerators
     tiled_rerocc_matmul_auto(MAT_DIM_I, MAT_DIM_J, MAT_DIM_K,
             (elem_t*)full_A, (elem_t*)full_B, NO_BIAS ? NULL : &full_D[0][0], (elem_t*)full_C,
             A_STRIDE, B_STRIDE, MAT_DIM_J, MAT_DIM_J,
