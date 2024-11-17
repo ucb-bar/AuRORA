@@ -1,14 +1,14 @@
 # AuRORA: Virtualized Accelerator Orchestration for Multi-Tenant Workloads
 
+Selected as one of IEEE Micro's Top Picks (2023)
 
 ## Quick Links
 
-* **MICRO2023 [paper](https://people.eecs.berkeley.edu/~ysshao/assets/papers/aurora-micro2023.pdf)**
+* **MICRO2023 [paper](https://dl.acm.org/doi/pdf/10.1145/3613424.3614280)**
+* **Top Picks [paper](https://ieeexplore.ieee.org/document/10555122)**
 * **Up-to-date version of ReRoCC interface [repo](https://github.com/ucb-bar/rerocc/tree/master)**
-* **Top level FireSim: [repo](https://github.com/SeahK/firesim-aurora-ae/tree/main), [zenodo](https://zenodo.org/records/8354298)**
+* **Top level FireSim (artifact): [repo](https://github.com/SeahK/firesim-aurora-ae/tree/main), [zenodo](https://zenodo.org/records/8354298)**
 * **Submodules (Zenodo): [chipyard](https://zenodo.org/records/8354250), [accelerator HW](https://zenodo.org/records/8354236), [SW](https://zenodo.org/records/8354218)**
-
-This repository corresponds to submodule "chipyard" as ReRoCC AE version implements here.
 
 
 ## What is AuRORA
@@ -58,6 +58,15 @@ If AuRORA helps you in your research, you are encouraged to cite our paper. Here
   author={Seah Kim and Jerry Zhao and Krste Asanovic and Borivoje Nikolic and Yakun Sophia Shao},
   booktitle={IEEE/ACM International Symposium on Microarchitecture (MICRO)},
   year={2023}
+}
+
+@inproceedings{
+  aurora_top_picks,
+  title={AuRORA: A Full-Stack Solution for Scalable and Virtualized Accelerator Integration},
+  author={Seah Kim and Jerry Zhao and Krste Asanovic and Borivoje Nikolic and Yakun Sophia Shao},
+  journal={IEEE Micro}, 
+  year={2024},
+  volume={44}
 }
 ```
 
